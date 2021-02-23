@@ -9,6 +9,7 @@ const app = express();
 app.get('/api/competitionLevels', async (req, res, next) => {
   try {
     const competitionLevels = await Competition.findAll({
+      order: [['name', 'ASC']],
       include: [
         {
           model: Dog,
@@ -25,6 +26,7 @@ app.get('/api/competitionLevels', async (req, res, next) => {
 app.get('/api/dogs', async (req, res, next) => {
   try {
     const dogs = await Dog.findAll({
+      order: [['id', 'ASC']],
       include: [
         {
           model: Dog,
