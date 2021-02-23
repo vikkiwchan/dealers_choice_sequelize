@@ -72,16 +72,26 @@ app.get('/', async (req, res, next) => {
                         Breed: ${dog.breed}
                       </li>
                       <li>
-                        Wins: ${dog.Competitions.map(
-                          (competition) => competition.name
-                        )}
+                        Wins: ${
+                          dog.Competitions.length !== 0
+                            ? `${dog.Competitions.map(
+                                (competition) => competition.name
+                              )}`
+                            : 0
+                        }
                       </li>
                       <li>
-                        Defeated: ${dog.Dogs.map((dog) => dog.name)}
+                        Defeated: ${
+                          dog.Dogs.length !== 0
+                            ? `${dog.Dogs.map((dog) => dog.name)}`
+                            : 0
+                        }
                       </li>
                       <li>
-                        Lost to: ${
-                          dog.victor.name !== null ? dog.victor.name : 'null'
+                        ${
+                          dog.victor !== null
+                            ? `Lost to ${dog.victor.name}`
+                            : 'Won the tournament!'
                         }
                       </li>
                     </ul>
