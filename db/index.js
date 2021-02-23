@@ -5,6 +5,7 @@ const db = new Sequelize(
   { logging: false }
 );
 
+// MODELS
 const Competition = db.define('Competition', {
   name: {
     type: DataTypes.STRING,
@@ -17,7 +18,42 @@ const Dog = db.define('Dog', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  breed: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
 });
+
+//CLASS METHODS
+Competition.findCompetitions = function () {
+  return this.findAll({
+    order: [['name', 'ASC']],
+    include: [
+      {
+        model: Dog,
+        as: 'winner',
+      },
+    ],
+  });
+};
+
+Dog.findDogs = function () {
+  return this.findAll({
+    order: [['id', 'ASC']],
+    include: [
+      {
+        model: Dog,
+        as: 'victor',
+      },
+      {
+        model: Dog,
+      },
+      {
+        model: Competition,
+      },
+    ],
+  });
+};
 
 Competition.belongsTo(Dog, { as: 'winner' });
 Dog.hasMany(Competition, { foreignKey: 'winnerId' });
@@ -44,14 +80,14 @@ const syncAndSeed = async () => {
     nonSportingGroup,
     bestInShow,
   ] = await Promise.all([
-    Dog.create({ name: 'Bailey' }),
-    Dog.create({ name: 'Charlie' }),
-    Dog.create({ name: 'Lily' }),
-    Dog.create({ name: 'Penny' }),
-    Dog.create({ name: 'Gigi' }),
-    Dog.create({ name: 'Peanut' }),
-    Dog.create({ name: 'Cody' }),
-    Dog.create({ name: 'Rufus' }),
+    Dog.create({ name: 'Bailey', breed: 'Labrador Retriever' }),
+    Dog.create({ name: 'Charlie', breed: 'Labrador Retriever' }),
+    Dog.create({ name: 'Lily', breed: 'Cocker Spaniel' }),
+    Dog.create({ name: 'Penny', breed: 'Cocker Spaniel' }),
+    Dog.create({ name: 'Gigi', breed: 'Chihuahua' }),
+    Dog.create({ name: 'Peanut', breed: 'Chihuahua' }),
+    Dog.create({ name: 'Cody', breed: 'Pug' }),
+    Dog.create({ name: 'Rufus', breed: 'Pug' }),
     Competition.create({ name: 'Breed Class - Labrador Retriever' }),
     Competition.create({ name: 'Breed Class - Cocker Spaniel' }),
     Competition.create({ name: 'Breed Class - Chihuahua' }),
