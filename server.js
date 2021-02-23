@@ -3,8 +3,12 @@ const {
   models: { Competition, Dog },
   syncAndSeed,
 } = require('./db');
+const path = require('path');
+
 const express = require('express');
 const app = express();
+
+app.use('/dist', express.static(path.join(__dirname, 'dist')));
 
 app.get('/api/competitionLevels', async (req, res, next) => {
   try {
