@@ -3,28 +3,9 @@ const {
   models: { Competition, Dog },
   syncAndSeed,
 } = require('./db');
-//const path = require('path');
 
 const express = require('express');
 const app = express();
-
-//app.use('/dist', express.static(path.join(__dirname, 'dist')));
-
-app.get('/api/competitionLevels', async (req, res, next) => {
-  try {
-    res.send(await Competition.findCompetitions());
-  } catch (err) {
-    console.error(error);
-  }
-});
-
-app.get('/api/dogs', async (req, res, next) => {
-  try {
-    res.send(await Dog.findDogs());
-  } catch (err) {
-    console.error(err);
-  }
-});
 
 app.get('/', async (req, res, next) => {
   try {
@@ -35,6 +16,7 @@ app.get('/', async (req, res, next) => {
     const html = `
       <html>
         <head>
+        <script defer src="/dist/main.js" defer></script>
          <title>American Kennel Club</title>
         </head>
         <body style="font-family:Verdana;">
