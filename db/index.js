@@ -63,6 +63,18 @@ Dog.hasMany(Dog, { foreignKey: 'victorId' });
 
 const syncAndSeed = async () => {
   await db.sync({ force: true });
+  const dogs = [
+    { name: 'Bailey', breed: 'Labrador Retriever' },
+    { name: 'Charlie', breed: 'Labrador Retriever' },
+    { name: 'Lily', breed: 'Cocker Spaniel' },
+    { name: 'Penny', breed: 'Cocker Spaniel' },
+    { name: 'Gigi', breed: 'Chihuahua' },
+    { name: 'Peanut', breed: 'Chihuahua' },
+    { name: 'Cody', breed: 'Pug' },
+    { name: 'Rufus', breed: 'Pug' },
+  ];
+
+  // this eliminates a lot of repetition
   const [
     bailey,
     charlie,
@@ -72,59 +84,38 @@ const syncAndSeed = async () => {
     peanut,
     cody,
     rufus,
-    breedClass_LabRet,
-    breedClass_CockerSpan,
-    breedClass_Chihuahua,
-    breedClass_Pug,
-    sportingGroup,
-    nonSportingGroup,
-    bestInShow,
-  ] = await Promise.all([
-    Dog.create({ name: 'Bailey', breed: 'Labrador Retriever' }),
-    Dog.create({ name: 'Charlie', breed: 'Labrador Retriever' }),
-    Dog.create({ name: 'Lily', breed: 'Cocker Spaniel' }),
-    Dog.create({ name: 'Penny', breed: 'Cocker Spaniel' }),
-    Dog.create({ name: 'Gigi', breed: 'Chihuahua' }),
-    Dog.create({ name: 'Peanut', breed: 'Chihuahua' }),
-    Dog.create({ name: 'Cody', breed: 'Pug' }),
-    Dog.create({ name: 'Rufus', breed: 'Pug' }),
-    Competition.create({ name: 'Breed Class - Labrador Retriever' }),
-    Competition.create({ name: 'Breed Class - Cocker Spaniel' }),
-    Competition.create({ name: 'Breed Class - Chihuahua' }),
-    Competition.create({ name: 'Breed Class - Pug' }),
-    Competition.create({ name: 'Sporting Group' }),
-    Competition.create({ name: 'Non-sporting Group' }),
-    Competition.create({ name: 'Best In Show' }),
-  ]);
-  breedClass_LabRet.winnerId = bailey.id;
-  breedClass_CockerSpan.winnerId = penny.id;
-  breedClass_Chihuahua.winnerId = gigi.id;
-  breedClass_Pug.winnerId = cody.id;
-  sportingGroup.winnerId = bailey.id;
-  nonSportingGroup.winnerId = gigi.id;
-  bestInShow.winnerId = gigi.id;
-  bailey.victorId = gigi.id;
-  charlie.victorId = bailey.id;
-  lily.victorId = penny.id;
-  penny.victorId = bailey.id;
-  peanut.victorId = gigi.id;
-  cody.victorId = gigi.id;
-  rufus.victorId = cody.id;
+  ] = await Promise.all(
+    dogs.map((dog) => Dog.create({ name: dog.name, breed: dog.breed }))
+  );
+
+  const competitions = [
+    { name: 'Breed Class - Labrador Retriever', winnerId: bailey.id },
+    { name: 'Breed Class - Cocker Spaniel', winnerId: penny.id },
+    { name: 'Breed Class - Chihuahua', winnerId: gigi.id },
+    { name: 'Breed Class - Pug', winnerId: cody.id },
+    { name: 'Sporting Group', winnerId: bailey.id },
+    { name: 'Non-sporting Group', winnerId: gigi.id },
+    { name: 'Best In Show', winnerId: gigi.id },
+  ];
+
+  await Promise.all(
+    competitions.map((competition) =>
+      Competition.create({
+        name: competition.name,
+        winnerId: competition.winnerId,
+      })
+    )
+  );
+
+  // if we instead use the update() method, we do NOT need to save() anymore- this UPDATES & SAVES it
   await Promise.all([
-    breedClass_LabRet.save(),
-    breedClass_CockerSpan.save(),
-    breedClass_Chihuahua.save(),
-    breedClass_Pug.save(),
-    sportingGroup.save(),
-    nonSportingGroup.save(),
-    bestInShow.save(),
-    bailey.save(),
-    charlie.save(),
-    lily.save(),
-    penny.save(),
-    peanut.save(),
-    cody.save(),
-    rufus.save(),
+    bailey.update({ victorId: gigi.id }),
+    charlie.update({ victorId: bailey.id }),
+    lily.update({ victorId: penny.id }),
+    penny.update({ victorId: bailey.id }),
+    peanut.update({ victorId: gigi.id }),
+    cody.update({ victorId: gigi.id }),
+    rufus.update({ victorId: cody.id }),
   ]);
 };
 
